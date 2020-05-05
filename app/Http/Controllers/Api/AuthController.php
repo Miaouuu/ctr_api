@@ -158,7 +158,8 @@ class AuthController extends Controller
             $request->all(),
             [
                 'email' => 'required|email',
-                'password' => 'required'
+                'password' => 'required',
+                'admin' => 'required|boolean'
             ]
         );
 
@@ -171,20 +172,35 @@ class AuthController extends Controller
             return response()->json(['error' => ['client_name' => ['Client name is incorrect.']]], 401);
         }
 
-        if(!Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return response()->json(['error' => ['login' => ['Invalid credentials.']]], 401);
         }
 
         $user = Auth::user();
-        $success['token'] =  $user->createToken($request->client_name)->plainTextToken;
+
+        if($request->admin) {
+            $success['token'] =  $user->createToken($request->client_name, ['admin'])->plainTextToken;
+            return response()->json(['success' => $success], 200);
+        }
+
+        $success['token'] =  $user->createToken($request->client_name, ['basic'])->plainTextToken;
 
         return response()->json(['success' => $success], 200);
     }
 
     /**
-     * @OA\Get(
+     *  @OA\Get(
      *     path="/api/v1/user",
      *     tags={"User"},
+     *
+     *     @OA\SecurityScheme(
+     *      securityScheme="bearerAuth",
+     *      in="header",
+     *      name="bearerAuth",
+     *      type="https",
+     *      scheme="bearer",
+     *      bearerFormat="JWT",
+     *     ),
      *
      *     @OA\Response(
      *        response="200",
@@ -222,5 +238,4 @@ class AuthController extends Controller
         $user->tokens()->delete();
         return response()->json(['success' => true], 200);
     }
-
 }
