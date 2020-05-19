@@ -348,9 +348,9 @@ class DraftController extends Controller
             return response()->json(['error' => ['user' => ['You must be logged in to do this.']]], 401);
         }
 
-        if (!$user->tokenCan('admin')) {
+        /* if (!$user->tokenCan('admin')) {
             return response()->json(['error' => ['token' => ['Unauthorized token for this action.']]], 401);
-        }
+        } */
 
         return response()->json(["drafts" => Draft::all()], 200);
     }
