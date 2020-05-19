@@ -93,12 +93,12 @@ class DraftController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'teama' => 'required',
-                'teamb' => 'required',
+                'teama' => 'present|string|nullable',
+                'teamb' => 'present|string|nullable',
                 'gamemode_type' => ['required', new EnumValue(GameModeType::class)],
                 'bans' => 'present|array',
                 'picks' => 'required|array',
-                'client_name' => 'required'
+                'client_name' => 'required|string'
             ]
         );
 
