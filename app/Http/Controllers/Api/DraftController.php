@@ -116,9 +116,9 @@ class DraftController extends Controller
             return response()->json(['error' => ['client_name' => ['Client name is incorrect.']]], 401);
         }
 
-        if (!$user->tokenCan('admin')) {
+        /*if (!$user->tokenCan('admin')) {
             return response()->json(['error' => ['token' => ['Unauthorized token for this action.']]], 401);
-        }
+        }*/
 
         $input = $request->all();
         $input['user_id'] = $user->id;
