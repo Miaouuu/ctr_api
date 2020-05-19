@@ -125,10 +125,19 @@ class DraftController extends Controller
         $draft = Draft::create($input);
 
         // Bans et picks
-        foreach ($input['bans'] as $ban) {
-            if(!$this->addBan($draft, $ban)) {
-                $draft->delete();
-                return response()->json(['error' => 'Something went wrong while adding a ban. (Draft will be now delete)'], 500);
+
+        // return response()->json(['error' => $draft->gamemode_type->value === GameModeType::NoBans]);
+
+        /*return response()->json(['input' => $input['bans'][0], 'enum_value' => $draft->gamemode_type->value,
+        'is_no_bans' => $draft->gamemode_type->value === GameModeType::NoBans,
+        'bans_null' => $input['bans'] == null]);*/
+
+        if(!(($input['bans'][0] == null) && ($draft->gamemode_type->value === GameModeType::NoBans))) {
+            foreach ($input['bans'] as $ban) {
+                if(!$this->addBan($draft, $ban)) {
+                    $draft->delete();
+                    return response()->json(['error' => 'Something went wrong while adding a ban. (Draft will be now delete)'], 500);
+                }
             }
         }
 
@@ -140,7 +149,6 @@ class DraftController extends Controller
         }
 
         $success['draft'] = $draft;
-        $success['debug'] = GameModeType::NoBans;
 
         return response()->json(['success' => $success], 200);
     }
