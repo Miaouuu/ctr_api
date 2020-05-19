@@ -366,7 +366,7 @@ class DraftController extends Controller
             return response()->json(['error' => ['token' => ['Unauthorized token for this action.']]], 401);
         } */
 
-        $drafts =  Draft::all();
+        $drafts =  Draft::where('user_id', $user->id)->get();
         foreach ($drafts as $draft) {
             $draft->mapsPicked;
             $draft->mapsBanned;
