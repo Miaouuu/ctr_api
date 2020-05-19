@@ -96,7 +96,7 @@ class DraftController extends Controller
                 'teama' => 'required',
                 'teamb' => 'required',
                 'gamemode_type' => ['required', new EnumValue(GameModeType::class)],
-                'bans' => 'required|array',
+                'bans' => 'present|array',
                 'picks' => 'required|array',
                 'client_name' => 'required'
             ]
@@ -132,11 +132,16 @@ class DraftController extends Controller
         'is_no_bans' => $draft->gamemode_type->value === GameModeType::NoBans,
         'bans_null' => $input['bans'] == null]);*/
 
-        if(!(($input['bans'][0] == null) && ($draft->gamemode_type->value === GameModeType::NoBans))) {
-            foreach ($input['bans'] as $ban) {
-                if(!$this->addBan($draft, $ban)) {
-                    $draft->delete();
-                    return response()->json(['error' => 'Something went wrong while adding a ban. (Draft will be now delete)'], 500);
+        if(!($draft->gamemode_type->value === GameModeType::NoBans)) {
+            if($input['bans'] == null) {
+                $draft->delete();
+                return response()->json(['error' => 'This gamemode needs ban to work.'], 500);
+            } else {
+                foreach ($input['bans'] as $ban) {
+                    if(!$this->addBan($draft, $ban)) {
+                        $draft->delete();
+                        return response()->json(['error' => 'Something went wrong while adding a ban. (Draft will be now delete)'], 500);
+                    }
                 }
             }
         }
@@ -183,12 +188,13 @@ class DraftController extends Controller
 
         if($draft->gamemode_type->value === GameModeType::NoBans) {
             // Si on est dans la draft en mode no bans
-            if($map == -1) {
+            /*if($map == -1) {
                 // $draft->mapsBanned()->attach($map);
                 return true;
             } else {
                 return false;
-            }
+            }*/
+            return false;
         }
 
         $map = Map::find($map);
