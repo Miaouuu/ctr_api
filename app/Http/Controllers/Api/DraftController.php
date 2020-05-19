@@ -352,6 +352,12 @@ class DraftController extends Controller
             return response()->json(['error' => ['token' => ['Unauthorized token for this action.']]], 401);
         } */
 
-        return response()->json(["drafts" => Draft::all()], 200);
+        $drafts =  Draft::all();
+        foreach ($drafts as $draft) {
+            $draft->mapsPicked;
+            $draft->mapsBanned;
+        }
+
+        return response()->json(["drafts" => $drafts], 200);
     }
 }
