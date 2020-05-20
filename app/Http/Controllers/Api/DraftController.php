@@ -116,22 +116,11 @@ class DraftController extends Controller
             return response()->json(['error' => ['client_name' => ['Client name is incorrect.']]], 401);
         }
 
-        /*if (!$user->tokenCan('admin')) {
-            return response()->json(['error' => ['token' => ['Unauthorized token for this action.']]], 401);
-        }*/
-
         $input = $request->all();
         $input['user_id'] = $user->id;
         $draft = Draft::create($input);
 
         // Bans et picks
-
-        // return response()->json(['error' => $draft->gamemode_type->value === GameModeType::NoBans]);
-
-        /*return response()->json(['input' => $input['bans'][0], 'enum_value' => $draft->gamemode_type->value,
-        'is_no_bans' => $draft->gamemode_type->value === GameModeType::NoBans,
-        'bans_null' => $input['bans'] == null]);*/
-
         if(!($draft->gamemode_type->value === GameModeType::NoBans)) {
             if($input['bans'] == null) {
                 $draft->delete();

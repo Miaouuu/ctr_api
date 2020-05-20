@@ -20,8 +20,8 @@ class CreateDraftsTable extends Migration
             $table->uuid('uuid');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->string('teama');
-            $table->string('teamb');
+            $table->string('teama')->nullable();
+            $table->string('teamb')->nullable();
             $table->string('gamemode_type')
                 ->default(GameModeType::Light);
             $table->timestamps();
